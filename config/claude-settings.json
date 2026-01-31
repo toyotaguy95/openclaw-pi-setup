@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [],
+    "deny": [
+      "Bash(rm -rf /)*",
+      "Bash(rm -rf ~)*",
+      "Bash(rm -rf .)*",
+      "Bash(*|bash)*",
+      "Bash(*|sh)*",
+      "Bash(dd if=*)*",
+      "Bash(mkfs*)*",
+      "Bash(git push --force*)*",
+      "Bash(git push -f*)*",
+      "Bash(chmod 777*)*",
+      "Bash(curl*|*)*",
+      "Bash(wget*|*)*"
+    ]
+  },
+  "security": {
+    "prompt_injection_protection": true
+  }
+}

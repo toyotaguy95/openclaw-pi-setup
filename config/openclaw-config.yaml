@@ -1,0 +1,109 @@
+# OpenClaw Secure Configuration
+# Hardened against Molt/Clawdbot vulnerabilities
+
+# 1. Gateway Security - bind to localhost only, require auth
+gateway:
+  host: "127.0.0.1"  # NOT 0.0.0.0
+  port: 18789
+  auth:
+    enabled: true
+    token: "${OPENCLAW_GATEWAY_TOKEN}"  # Set in environment
+
+# 2. DM Policy - allowlist only
+dm_policy:
+  mode: "allowlist"
+  allowed_users: []  # Add your user IDs here
+
+# 3. Sandbox enabled
+sandbox:
+  enabled: true
+  mode: "all"
+  docker:
+    network: "none"  # No network access from sandbox
+
+# 6. Dangerous commands blocked
+blocked_commands:
+  - "rm -rf /"
+  - "rm -rf /*"
+  - "rm -rf ~"
+  - "rm -rf ."
+  - "curl|bash"
+  - "curl|sh"
+  - "wget|bash"
+  - "wget|sh"
+  - "git push --force"
+  - "git push -f origin main"
+  - "git push -f origin master"
+  - "dd if="
+  - "mkfs"
+  - "> /dev/sd"
+
+# 8. MCP Tool restrictions
+mcp:
+  tool_policy: "minimal"
+  require_approval: true
+
+# 9. Audit logging with redaction
+logging:
+  enabled: true
+  level: "info"
+  session_logging: true
+  log_path: "~/.openclaw/logs"
+  include_timestamps: true
+  log_tool_calls: true
+  redaction:
+    enabled: true
+    patterns:
+      - "password"
+      - "secret"
+      - "token"
+      - "api_key"
+      - "apikey"
+      - "api-key"
+      - "bearer"
+      - "authorization"
+      - "credential"
+      - "private_key"
+      - "ssh-rsa"
+      - "-----BEGIN"
+    mask: "[REDACTED]"
+
+# 10. Pairing security
+pairing:
+  code_length: 32
+  algorithm: "crypto_random"
+  rate_limit:
+    attempts: 3
+    window_seconds: 300
+
+# Channel Configuration (example)
+channels:
+  telegram:
+    enabled: true
+    bot_token: "${TELEGRAM_BOT_TOKEN}"  # Set in environment
+    allowed_chat_ids: []  # Add your chat IDs
+
+# Skills configuration
+skills:
+  enabled:
+    - agent-browser
+    - proactive-agent
+    - self-improving-agent
+    - weather
+    - coding-agent
+    - skill-creator
+    - docker-essentials
+    - uptime-kuma
+    - video-frames
+
+  # Resource limits for heavy skills (prevent Pi freeze)
+  limits:
+    proactive-agent:
+      max_concurrent: 1
+      cooldown_seconds: 30
+    agent-browser:
+      max_concurrent: 1
+      timeout_seconds: 60
+    video-frames:
+      max_concurrent: 1
+      max_memory_mb: 512
