@@ -6,7 +6,7 @@ A hardened OpenClaw AI agent deployment on Raspberry Pi 4B with security-first c
 
 This project documents the setup of an agentic AI assistant (OpenClaw) on a resource-constrained Raspberry Pi, with emphasis on:
 
-- **Security hardening** against known vulnerabilities (Molt/Clawdbot)
+- **Security hardening** against known vulnerabilities (OpenClaw)
 - **Network isolation** via VLAN segmentation
 - **Resource optimization** for 4GB RAM constraint
 - **Custom agent personality** with security-conscious behavior
@@ -47,12 +47,28 @@ This project documents the setup of an agentic AI assistant (OpenClaw) on a reso
 - **Device:** Raspberry Pi 4B (2018)
 - **RAM:** 4GB
 - **Storage:** 256GB microSD
-- **Display:** HDMI monitor + touch display
-- **Network:** Ethernet (VLAN 40)
+- **Display:** HDMI monitor + 720x1280 DSI touch display
+- **Network:** Ethernet (VLAN 40) or WiFi (portable mode)
+
+## Talon Face Display
+
+Animated lobster face on the touch display that reflects agent state:
+
+| State | Animation | Trigger |
+|-------|-----------|---------|
+| `idle` | Gentle claw sway | Default/done processing |
+| `thinking` | Eyes up, thought bubbles | Message received |
+| `speaking` | Mouth animation | Sending response |
+| `working` | Claws snipping | Running commands |
+| `sleeping` | Closed eyes, zzz | Quiet hours |
+
+**Auto-triggers via OpenClaw hooks:**
+- `face-init` - Sets face to idle on gateway startup
+- `face-thinking` - Sets face to thinking when processing messages (60s timeout fallback to idle)
 
 ## Security Hardening
 
-### Vulnerabilities Addressed (Molt/Clawdbot)
+### Vulnerabilities Addressed (OpenClaw)
 
 | # | Vulnerability | Mitigation |
 |---|---------------|------------|
@@ -174,11 +190,23 @@ openclaw-pi-setup/
 │   ├── MEMORY.md               # Long-term memory
 │   ├── HEARTBEAT.md            # Periodic checks
 │   └── AGENTS.md               # Operating rules
+├── talon-face/
+│   ├── scripts/
+│   │   ├── face-display.sh     # Display controller
+│   │   ├── set-face.sh         # Manual state control
+│   │   └── generate-lobster.sh # GIF generator
+│   └── gifs/                   # Animated state GIFs (720x1280)
+├── hooks/
+│   ├── face-init/              # Gateway startup hook
+│   └── face-thinking/          # Message processing hook
+├── systemd/
+│   └── talon-face.service      # Face display service
 ├── scripts/
 │   ├── harden-system.sh        # System hardening script
-│   └── setup-gateway.sh        # Gateway setup script
+│   ├── setup-gateway.sh        # Gateway setup script
+│   └── backup-talon.sh         # Backup/restore script
 └── docs/
-    └── vulnerabilities.md      # Molt/Clawdbot details
+    └── vulnerabilities.md      # Security details
 ```
 
 ## Lessons Learned
@@ -205,8 +233,25 @@ openclaw-pi-setup/
 
 MIT License - See [LICENSE](LICENSE) for details.
 
+## Portable Mode
+
+Talon is designed to be portable - take it anywhere with power and WiFi:
+
+1. **Auto-start on boot** - Services enabled with linger, no login required
+2. **Face display** - Shows on touch screen automatically
+3. **Telegram always on** - Message Talon from anywhere
+4. **VLAN or WiFi** - Works on isolated network at home or WiFi on the go
+
+```bash
+# Backup before moving
+~/scripts/backup-talon.sh
+
+# On new location, just plug in power + WiFi
+# Talon starts automatically and is reachable via Telegram
+```
+
 ## Acknowledgments
 
 - [OpenClaw](https://openclaw.ai) - AI agent framework
 - [Anthropic](https://anthropic.com) - Claude AI
-- Molt/Clawdbot security researchers for vulnerability disclosures
+- [@mattyryze](https://x.com/mattyryze) - Security vulnerability disclosures

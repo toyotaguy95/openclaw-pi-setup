@@ -1,0 +1,13 @@
+[Unit]
+Description=Talon Face Display
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/home/claw/talon-face/scripts/face-display.sh
+Restart=on-failure
+RestartSec=5
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=default.target
