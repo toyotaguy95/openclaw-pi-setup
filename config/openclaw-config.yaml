@@ -76,12 +76,12 @@ pairing:
     attempts: 3
     window_seconds: 300
 
-# Channel Configuration (example)
+# Telegram Channel
 channels:
   telegram:
     enabled: true
     bot_token: "${TELEGRAM_BOT_TOKEN}"  # Set in environment
-    allowed_chat_ids: []  # Add your chat IDs
+    allowed_chat_ids: []  # Add your Telegram user/chat IDs
 
 # Skills configuration
 skills:
